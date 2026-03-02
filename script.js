@@ -6,6 +6,12 @@ const livesEl = document.getElementById("lives");
 const timeEl = document.getElementById("time");
 const levelEl = document.getElementById("level");
 
+const bananaPanel = document.getElementById("bananaChallenge");
+const bananaImg = document.getElementById("bananaImg");
+const bananaAnswer = document.getElementById("bananaAnswer");
+const bananaSubmit = document.getElementById("bananaSubmit");
+const bananaMsg = document.getElementById("bananaMsg");
+
 // ====== GAME STATE ======
 let firstCard = null;
 let secondCard = null;
@@ -20,16 +26,19 @@ let level = 1;
 let timeLeft = 60;
 let timerId = null;
 
-// Level settings: pairs + time
+let currentBananaSolution = null;
+let challengeActive = false;
+
+// Level settings
 const levelSettings = {
   1: { pairs: 4, time: 45 },
   2: { pairs: 6, time: 50 },
   3: { pairs: 8, time: 60 },
 };
 
-let values = []; // card values for the current level
+let values = [];
 
-// ====== UI HELPERS ======
+// ====== UI ======
 function updateHUD() {
   movesEl.textContent = moves;
   scoreEl.textContent = score;
@@ -40,17 +49,24 @@ function updateHUD() {
 
 // ====== TIMER ======
 function startTimer() {
-  if (timerId) return; // avoid double timers
+  if (timerId) return;
 
   timerId = setInterval(() => {
     timeLeft--;
-    timeEl.textContent = timeLeft;
 
+    // Stop exactly at 0
     if (timeLeft <= 0) {
+      timeLeft = 0;
+      timeEl.textContent = timeLeft;
+
       clearInterval(timerId);
       timerId = null;
+
       handleTimeout();
+      return;
     }
+
+    timeEl.textContent = timeLeft;
   }, 1000);
 }
 
@@ -62,7 +78,57 @@ function resetTimer(newTime) {
 }
 
 function handleTimeout() {
-  loseLife("Time out!");
+  lives--;
+  livesEl.textContent = lives;
+
+  // If still have lives, just retry level (NO banana challenge)
+  if (lives > 0) {
+    alert("Time out! You lost 1 life. Try again.");
+    restartLevel();
+    return;
+  }
+
+  // If lives reached 0, show Banana challenge
+  showBananaChallenge("No lives left! Solve this Banana challenge to continue.");
+}
+
+// ====== BANANA CHALLENGE ======
+function showBananaChallenge(reasonText) {
+  clearInterval(timerId);
+  timerId = null;
+
+  lockBoard = true;
+  challengeActive = true;
+
+  bananaMsg.textContent = reasonText + " (Loading...)";
+  bananaAnswer.value = "";
+  bananaImg.src = "";
+  bananaPanel.classList.remove("hidden");
+
+  fetchBananaQuestion();
+}
+
+async function fetchBananaQuestion() {
+  try {
+    const res = await fetch("https://marcconrad.com/uob/banana/api.php", { cache: "no-store" });
+
+    if (!res.ok) throw new Error("HTTP " + res.status);
+
+    const data = await res.json();
+
+    bananaImg.src = data.question;
+    currentBananaSolution = String(data.solution);
+    bananaMsg.textContent = "Solve the banana question to retry the level.";
+  } catch (err) {
+    bananaMsg.textContent = "Failed to load Banana API. Check internet and try again.";
+    currentBananaSolution = null;
+  }
+}
+
+function hideBananaChallenge() {
+  bananaPanel.classList.add("hidden");
+  challengeActive = false;
+  lockBoard = false;
 }
 
 // ====== LEVEL / BOARD ======
@@ -70,12 +136,13 @@ function applyLevelSettings() {
   const settings = levelSettings[level];
   resetTimer(settings.time);
   levelEl.textContent = level;
+  updateHUD();
 }
 
 function buildBoard() {
   const settings = levelSettings[level];
 
-  // Build values array (pairs)
+  // Build pairs for this level
   values = [];
   for (let i = 1; i <= settings.pairs; i++) {
     values.push(i);
@@ -85,7 +152,7 @@ function buildBoard() {
   // Shuffle
   values.sort(() => Math.random() - 0.5);
 
-  // Clear old board
+  // Clear board
   gameBoard.innerHTML = "";
 
   // Create cards
@@ -100,13 +167,8 @@ function buildBoard() {
     gameBoard.appendChild(card);
   });
 
-  // Reset turn state
   resetTurn();
-
-  // Start timer for the level
   startTimer();
-
-  // Update HUD
   updateHUD();
 }
 
@@ -127,7 +189,7 @@ function handleCardClick(card) {
   secondCard = card;
   lockBoard = true;
 
-  // One move = picking second card
+  // Count a move when second card is chosen
   moves++;
   movesEl.textContent = moves;
 
@@ -176,39 +238,19 @@ function checkLevelComplete() {
   }
 }
 
-// ====== LIVES / RESTART ======
-function loseLife(message) {
-  lives--;
-  livesEl.textContent = lives;
-
-  alert(message + " You lost 1 life.");
-
-  if (lives <= 0) {
-    clearInterval(timerId);
-    timerId = null;
-    alert("Game Over! Restarting from Level 1.");
-    restartGame();
-  } else {
-    restartLevel();
-  }
-}
-
+// ====== RESTARTS ======
 function restartLevel() {
   clearInterval(timerId);
   timerId = null;
 
-  // Reset turn
-  resetTurn();
-
-  // Reset timer for current level
   applyLevelSettings();
-
-  // Rebuild board (reshuffle)
   buildBoard();
 }
 
 function restartGame() {
-  // Reset everything
+  clearInterval(timerId);
+  timerId = null;
+
   level = 1;
   lives = 3;
   moves = 0;
@@ -224,7 +266,35 @@ function resetTurn() {
   lockBoard = false;
 }
 
+// ====== BANANA SUBMIT ======
+bananaSubmit.addEventListener("click", () => {
+  if (!challengeActive) return;
+
+  if (currentBananaSolution === null) {
+    bananaMsg.textContent = "No question loaded. Please try again.";
+    fetchBananaQuestion();
+    return;
+  }
+
+  const userAns = String(bananaAnswer.value).trim();
+
+  if (userAns === currentBananaSolution) {
+    hideBananaChallenge();
+
+    // If lives already reached 0, restart full game
+    if (lives <= 0) {
+      alert("Correct! Restarting the game.");
+      restartGame();
+    } else {
+      alert("Correct! Retrying the level.");
+      restartLevel(); // Option C
+    }
+  } else {
+    bananaMsg.textContent = "Wrong answer. Try again (new question loaded).";
+    fetchBananaQuestion();
+  }
+});
+
 // ====== START GAME ======
 applyLevelSettings();
-updateHUD();
 buildBoard();

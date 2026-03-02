@@ -1,23 +1,36 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Banana Memory Game</title>
-    <link rel="stylesheet" href="style.css">
+  <title>Banana Memory Game</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <h1>Banana Memory Game</h1>
+  <h1>Banana Memory Game</h1>
 
-<div class="hud">
-  <p>Moves: <span id="moves">0</span></p>
-  <p>Score: <span id="score">0</span></p>
-  <p>Lives: <span id="lives">3</span></p>
-  <p>Time: <span id="time">60</span>s</p>
-  <p>Level: <span id="level">1</span></p>
-</div>
+  <div class="hud">
+    <p>Moves: <span id="moves">0</span></p>
+    <p>Score: <span id="score">0</span></p>
+    <p>Lives: <span id="lives">3</span></p>
+    <p>Time: <span id="time">60</span>s</p>
+    <p>Level: <span id="level">1</span></p>
+  </div>
 
-<div class="game-board" id="gameBoard"></div>
+  <div class="game-board" id="gameBoard"></div>
 
-<script src="script.js"></script>
+  <!-- Banana Recovery Challenge (hidden until timeout) -->
+  <div id="bananaChallenge" class="banana-challenge hidden">
+    <h2>Recovery Challenge 🍌</h2>
+    <p id="bananaMsg">Solve this to retry the level:</p>
+
+    <img id="bananaImg" alt="Banana Question" width="250" />
+
+    <div class="banana-input">
+      <input id="bananaAnswer" type="number" placeholder="Enter answer" />
+      <button id="bananaSubmit">Submit</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
 </body>
 </html>
