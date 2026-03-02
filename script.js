@@ -1,5 +1,7 @@
 const gameBoard = document.getElementById("gameBoard");
 const movesEl = document.getElementById("moves");
+let score = 0;
+const scoreEl = document.getElementById("score");
 
 let firstCard = null;
 let secondCard = null;
@@ -56,6 +58,11 @@ function checkForMatch() {
   if (isMatch) {
     firstCard.dataset.matched = "true";
     secondCard.dataset.matched = "true";
+
+    // ADD THESE TWO LINES 👇
+    score += 10;
+    scoreEl.textContent = score;
+
     resetTurn();
   } else {
     setTimeout(() => {
