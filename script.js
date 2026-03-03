@@ -12,6 +12,14 @@ const bananaAnswer = document.getElementById("bananaAnswer");
 const bananaSubmit = document.getElementById("bananaSubmit");
 const bananaMsg = document.getElementById("bananaMsg");
 
+const loginBox = document.getElementById("loginBox");
+const usernameEl = document.getElementById("username");
+const passwordEl = document.getElementById("password");
+const loginBtn = document.getElementById("loginBtn");
+const logoutBtn = document.getElementById("logoutBtn");
+const loginMsg = document.getElementById("loginMsg");
+const welcomeText = document.getElementById("welcomeText");
+
 // ====== GAME STATE ======
 let firstCard = null;
 let secondCard = null;
@@ -295,6 +303,57 @@ bananaSubmit.addEventListener("click", () => {
   }
 });
 
-// ====== START GAME ======
-applyLevelSettings();
-buildBoard();
+function isLoggedIn() {
+  return localStorage.getItem("bm_user") !== null;
+}
+
+function setLoggedInUser(username) {
+  localStorage.setItem("bm_user", username);
+}
+
+function logout() {
+  localStorage.removeItem("bm_user");
+  location.reload();
+}
+
+function updateLoginUI() {
+  const user = localStorage.getItem("bm_user");
+
+  if (user) {
+    loginBox.classList.add("hidden");
+    welcomeText.classList.remove("hidden");
+    welcomeText.textContent = `Welcome, ${user}! ✅`;
+  } else {
+    loginBox.classList.remove("hidden");
+    welcomeText.classList.add("hidden");
+  }
+}
+
+loginBtn.addEventListener("click", () => {
+  const u = usernameEl.value.trim();
+  const p = passwordEl.value.trim();
+
+  if (!u || !p) {
+    loginMsg.textContent = "Enter username and password.";
+    return;
+  }
+
+  // Simple demo login (for assignment)
+  // (You can later improve security, but this is OK for coursework demo)
+  setLoggedInUser(u);
+  loginMsg.textContent = "";
+  updateLoginUI();
+
+  // Start the game now that user is logged in
+  applyLevelSettings();
+  buildBoard();
+});
+
+logoutBtn.addEventListener("click", logout);
+
+updateLoginUI();
+
+if (isLoggedIn()) {
+  applyLevelSettings();
+  buildBoard();
+}

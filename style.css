@@ -62,3 +62,23 @@ body {
   width: 160px;
   padding: 8px;
 }
+
+.login-box {
+  margin: 10px auto;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  width: 320px;
+}
+
+.login-box input {
+  width: 90%;
+  padding: 8px;
+  margin: 6px 0;
+}
+
+.login-box button {
+  margin: 6px 4px;
+  padding: 8px 14px;
+  cursor: pointer;
+}
