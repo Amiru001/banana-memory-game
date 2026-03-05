@@ -213,6 +213,18 @@ const levelSettings = {
   3: { pairs: 8, time: 60 }
 };
 
+// ✅ Emoji set (acts like your images)
+const emojiPool = [
+  { id: 1, icon: "🍌" },
+  { id: 2, icon: "🍓" },
+  { id: 3, icon: "🍇" },
+  { id: 4, icon: "🍍" },
+  { id: 5, icon: "🍉" },
+  { id: 6, icon: "🍊" },
+  { id: 7, icon: "🍎" },
+  { id: 8, icon: "🥝" },
+];
+
 // ===== UI =====
 function updateHUD() {
   movesEl.textContent = moves;
@@ -378,24 +390,53 @@ function applyLevelSettings() {
   updateHUD();
 }
 
+// ✅ BUILD BOARD WITH EMOJIS (instead of numbers)
 function buildBoard() {
   const settings = levelSettings[level];
 
+  const selected = emojiPool.slice(0, settings.pairs);
+
   values = [];
-  for (let i = 1; i <= settings.pairs; i++) {
-    values.push(i);
-    values.push(i);
-  }
+  selected.forEach(item => {
+    values.push(item.id);
+    values.push(item.id);
+  });
 
   values.sort(() => Math.random() - 0.5);
   gameBoard.innerHTML = "";
 
-  values.forEach((value) => {
+  values.forEach((id) => {
     const card = document.createElement("div");
-    card.classList.add("card");
-    card.dataset.value = value;
+    card.classList.add("card", "is-hidden");
+    card.dataset.value = String(id);
     card.dataset.matched = "false";
-    card.textContent = "?";
+
+    // 🔥 Flip structure
+    const inner = document.createElement("div");
+    inner.classList.add("card-inner");
+
+    const front = document.createElement("div");
+    front.classList.add("card-face", "card-front");
+
+    const back = document.createElement("div");
+    back.classList.add("card-face", "card-back");
+
+    const cover = document.createElement("div");
+    cover.classList.add("card-cover");
+    cover.textContent = "?";
+
+    const emoji = document.createElement("div");
+    emoji.classList.add("card-emoji");
+    emoji.textContent = selected.find(x => x.id === id).icon;
+
+    front.appendChild(cover);
+    back.appendChild(emoji);
+
+    inner.appendChild(front);
+    inner.appendChild(back);
+
+    card.appendChild(inner);
+
     card.addEventListener("click", () => handleCardClick(card));
     gameBoard.appendChild(card);
   });
@@ -539,8 +580,10 @@ function handleCardClick(card) {
   if (isPaused) return;
   if (card === firstCard) return;
   if (card.dataset.matched === "true") return;
+  if (!card.classList.contains("is-hidden")) return; // already revealed
 
-  card.textContent = card.dataset.value;
+  // reveal emoji
+  card.classList.remove("is-hidden");
 
   if (!firstCard) {
     firstCard = card;
@@ -560,16 +603,29 @@ function checkForMatch() {
   const isMatch = firstCard.dataset.value === secondCard.dataset.value;
 
   if (isMatch) {
+    // mark matched
     firstCard.dataset.matched = "true";
     secondCard.dataset.matched = "true";
+
     score += 10;
     updateHUD();
-    resetTurn();
-    checkLevelComplete();
+
+    // vibrate
+    firstCard.classList.add("is-match");
+    secondCard.classList.add("is-match");
+
+    // then disappear
+    setTimeout(() => {
+      firstCard.classList.add("is-gone");
+      secondCard.classList.add("is-gone");
+      resetTurn();
+      checkLevelComplete();
+    }, 600);
+
   } else {
     setTimeout(() => {
-      firstCard.textContent = "?";
-      secondCard.textContent = "?";
+      firstCard.classList.add("is-hidden");
+      secondCard.classList.add("is-hidden");
       resetTurn();
     }, 900);
   }
