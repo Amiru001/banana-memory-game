@@ -1,22 +1,294 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Banana Memory Game</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Banana Memory Game</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
 
-    <h1>Banana Memory Game</h1>
+  <!-- Custom cursor -->
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-dot" id="cursorDot"></div>
 
-<div class="hud">
-  <p>Moves: <span id="moves">0</span></p>
-  <p>Score: <span id="score">0</span></p>
-  <p>Lives: <span id="lives">3</span></p>
-  <p>Time: <span id="time">60</span>s</p>
-</div>
+  <!-- Background -->
+  <div class="bg-mesh"></div>
+  <div class="scanlines"></div>
+  <canvas id="particles"></canvas>
 
-<div class="game-board" id="gameBoard"></div>
+  <!-- ================= LANDING PAGE ================= -->
+  <section id="landingPage">
+    <header>
+      <div class="logo">
+        <div class="logo-icon">🍌</div>
+        BANANA MEMORY
+      </div>
+      <a href="#" class="back-btn" id="homeBtn">← Home</a>
+    </header>
 
-<script src="script.js"></script>
+    <main>
+      <div class="left-section">
+        <div class="tag-line">Banana Memory Challenge</div>
+
+        <h1 class="game-title">
+          <span class="word-flip">BANANA</span>
+          <span class="word-game">MEMORY</span>
+        </h1>
+
+        <p class="subtitle">
+          Match hidden banana cards before the timer runs out. Progress through levels, protect your lives, and solve a Banana API recovery challenge when all lives are lost.
+        </p>
+
+        <div class="stats-row">
+          <div class="stat">
+            <div class="stat-num" data-target="3">0</div>
+            <div class="stat-label">Levels</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num" data-target="3">0</div>
+            <div class="stat-label">Lives</div>
+          </div>
+          <div class="stat">
+            <div class="stat-num" data-target="1">0</div>
+            <div class="stat-label">API Challenge</div>
+          </div>
+        </div>
+
+        <div class="cta-row">
+          <a href="#" class="btn-primary" id="playNow">▶ &nbsp; START GAME</a>
+          <a href="#" class="btn-secondary" id="openInstructions">☰ &nbsp; HOW TO PLAY</a>
+        </div>
+      </div>
+
+      <div class="right-section">
+        <div class="frame-wrap">
+          <div class="octo-ring"></div>
+          <div class="octo-ring ring2"></div>
+          <div class="octo-ring ring3"></div>
+
+          <div class="octo-top">
+            <div class="deco-line"></div>
+            <div class="deco-notch"></div>
+            <div class="deco-line"></div>
+          </div>
+          <div class="octo-bot">
+            <div class="deco-line"></div>
+            <div class="deco-notch"></div>
+            <div class="deco-line"></div>
+          </div>
+
+          <div class="corner-connector cc-tl"></div>
+          <div class="corner-connector cc-tr"></div>
+          <div class="corner-connector cc-bl"></div>
+          <div class="corner-connector cc-br"></div>
+
+          <div class="floating-word fw1">Timer</div>
+          <div class="floating-word fw2">Recovery</div>
+
+          <div class="tile-grid">
+            <div class="tile" style="animation: tileIn 0.6s 0.8s ease both; opacity:0;">
+              <div class="tile-inner">
+                <div class="tile-front">
+                  <div class="tile-letter">B</div>
+                </div>
+                <div class="tile-back">
+                  <div class="tile-back-title">Banana API</div>
+                  <div class="tile-back-desc">Solve a Banana API question to continue after losing all lives.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tile" style="animation: tileIn 0.6s 1.0s ease both; opacity:0;">
+              <div class="tile-inner">
+                <div class="tile-front purple">
+                  <div class="tile-letter">M</div>
+                </div>
+                <div class="tile-back">
+                  <div class="tile-back-title">Memory Match</div>
+                  <div class="tile-back-desc">Flip cards and find matching pairs to increase your score.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tile" style="animation: tileIn 0.6s 1.2s ease both; opacity:0;">
+              <div class="tile-inner">
+                <div class="tile-front">
+                  <div class="tile-letter">T</div>
+                  <div class="tile-label">Timer</div>
+                </div>
+                <div class="tile-back">
+                  <div class="tile-back-title">Time Challenge</div>
+                  <div class="tile-back-desc">Complete each level before the countdown ends.</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="tile" style="animation: tileIn 0.6s 1.4s ease both; opacity:0;">
+              <div class="tile-inner">
+                <div class="tile-front purple">
+                  <div class="tile-letter">L</div>
+                  <div class="tile-label">Levels</div>
+                </div>
+                <div class="tile-back">
+                  <div class="tile-back-title">Level System</div>
+                  <div class="tile-back-desc">Advance through multiple levels with increasing challenge.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="difficulty-row">
+            <span class="diff-badge diff-easy active" data-difficulty="easy">Easy</span>
+            <span class="diff-badge diff-med" data-difficulty="medium">Medium</span>
+            <span class="diff-badge diff-hard" data-difficulty="hard">Hard</span>
+          </div>
+
+          <div class="live-ticker">
+            <div class="live-dot"></div>
+            <div class="live-text">Live</div>
+            <div class="live-scroll">
+              <span class="live-scroll-inner">
+                🍌 Match banana cards before time runs out &nbsp;·&nbsp; ⏱ Complete each level under the countdown &nbsp;·&nbsp; ❤️ You have 3 lives before recovery mode starts &nbsp;·&nbsp; 🧩 Banana API challenge appears when all lives are lost &nbsp;·&nbsp; 🎮 Score increases with every correct match
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div class="scroll-indicator">
+      <div class="scroll-text">Scroll</div>
+      <div class="scroll-arrow"></div>
+    </div>
+
+    <!-- Instructions Modal -->
+    <div class="modal-overlay" id="modalOverlay">
+      <div class="modal-box">
+        <div class="modal-close" id="modalClose">✕</div>
+        <div class="modal-title">How to Play</div>
+        <div class="modal-sub">Banana Memory — Rules & Guide</div>
+
+        <div class="instructions-list">
+          <div class="inst-item"><div class="inst-num">1</div><div class="inst-text">Flip two cards and find a matching pair.</div></div>
+          <div class="inst-item"><div class="inst-num">2</div><div class="inst-text">Each correct match increases score.</div></div>
+          <div class="inst-item"><div class="inst-num">3</div><div class="inst-text">Timer counts down. If it reaches 0, you lose a life.</div></div>
+          <div class="inst-item"><div class="inst-num">4</div><div class="inst-text">After all lives are lost, Banana API recovery appears.</div></div>
+          <div class="inst-item"><div class="inst-num">5</div><div class="inst-text">Solve Banana puzzle to restore lives and continue.</div></div>
+        </div>
+
+        <a href="#" class="modal-play-btn" id="modalPlay">START PLAYING ▶</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= GAME CONTAINER ================= -->
+  <section id="gameContainer" class="hidden">
+    <div class="game-topbar">
+      <div>
+        <p class="mini-label">BANANA MEMORY</p>
+        <h1 class="game-heading">MISSION BOARD</h1>
+      </div>
+      <button id="backToMenuBtn" class="game-back-btn">Back to Menu</button>
+    </div>
+
+    <div id="loginBox" class="login-box">
+      <h2 class="panel-title">PLAYER LOGIN</h2>
+
+      <div class="input-group">
+        <input id="username" type="text" placeholder="Username" />
+      </div>
+
+      <div class="input-group">
+        <input id="password" type="password" placeholder="Password" />
+      </div>
+
+      <button id="loginBtn" class="primary-btn">LOGIN</button>
+      <p id="loginMsg" class="form-msg"></p>
+    </div>
+
+    <div id="welcomeBar" class="welcome-bar hidden">
+      <p id="welcomeText"></p>
+      <button id="logoutBtn" class="logout-btn">Logout</button>
+    </div>
+
+    <div id="gameArea" class="game-area hidden">
+      <div class="hud hud-6">
+        <div class="hud-card"><span class="hud-label">MOVES</span><strong id="moves">0</strong></div>
+        <div class="hud-card"><span class="hud-label">SCORE</span><strong id="score">0</strong></div>
+        <div class="hud-card"><span class="hud-label">LIVES</span><strong id="lives">3</strong></div>
+        <div class="hud-card"><span class="hud-label">TIME</span><strong><span id="time">60</span>s</strong></div>
+        <div class="hud-card"><span class="hud-label">LEVEL</span><strong id="level">1</strong></div>
+
+        <div class="hud-card hud-action-card">
+          <button id="pauseBtn" class="pause-btn">⏸ Pause</button>
+        </div>
+      </div>
+
+      <p id="statusMsg" class="status-msg"></p>
+
+      <div class="board-panel">
+        <div class="board-panel-inner">
+          <div class="game-board" id="gameBoard"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Banana Challenge Popup -->
+    <div id="bananaChallenge" class="banana-challenge hidden">
+      <div class="popup-glow"></div>
+
+      <h2>RECOVERY CHALLENGE 🍌</h2>
+      <p id="bananaMsg">Solve this banana puzzle to continue.</p>
+
+      <div class="banana-image-wrap">
+        <img id="bananaImg" alt="Banana Question" width="250" />
+      </div>
+
+      <div class="banana-input">
+        <input id="bananaAnswer" type="number" placeholder="Enter answer" />
+        <button id="bananaSubmit">SUBMIT</button>
+      </div>
+    </div>
+
+    <!-- Level Complete Modal (NO background animations) -->
+    <div id="levelCompleteModal" class="level-complete-modal hidden">
+      <div class="level-complete-backdrop static-backdrop"></div>
+
+      <div class="level-complete-card neon-card">
+        <button id="closeLevelModal" class="close-level-modal">✕</button>
+
+        <div class="ribbon-banner neon-ribbon">LEVEL CLEARED</div>
+
+        <p class="level-result-text neon-text">
+          Level <span id="completedLevelText">1</span>
+          •
+          Score <span id="completedScoreText">0</span>
+        </p>
+
+        <div class="stars-wrap">
+          <span class="star-icon static-star">★</span>
+          <span class="star-icon static-star star-big">★</span>
+          <span class="star-icon static-star">★</span>
+        </div>
+
+        <button id="nextLevelBtn" class="next-level-btn neon-btn">Next Level →</button>
+      </div>
+    </div>
+
+    <!-- Pause Modal -->
+    <div id="pauseModal" class="pause-modal hidden">
+      <div class="pause-backdrop"></div>
+      <div class="pause-card">
+        <h2>GAME PAUSED</h2>
+        <p>Click resume to continue.</p>
+        <button id="resumeBtn" class="resume-btn">Resume</button>
+      </div>
+    </div>
+
+  </section>
+
+  <script src="script.js"></script>
 </body>
 </html>
