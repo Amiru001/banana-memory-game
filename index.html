@@ -171,11 +171,26 @@
         <div class="modal-sub">Banana Memory — Rules & Guide</div>
 
         <div class="instructions-list">
-          <div class="inst-item"><div class="inst-num">1</div><div class="inst-text">Flip two cards and find a matching pair.</div></div>
-          <div class="inst-item"><div class="inst-num">2</div><div class="inst-text">Each correct match increases score.</div></div>
-          <div class="inst-item"><div class="inst-num">3</div><div class="inst-text">Timer counts down. If it reaches 0, you lose a life.</div></div>
-          <div class="inst-item"><div class="inst-num">4</div><div class="inst-text">After all lives are lost, Banana API recovery appears.</div></div>
-          <div class="inst-item"><div class="inst-num">5</div><div class="inst-text">Solve Banana puzzle to restore lives and continue.</div></div>
+          <div class="inst-item">
+            <div class="inst-num">1</div>
+            <div class="inst-text">Flip two cards and find a matching pair.</div>
+          </div>
+          <div class="inst-item">
+            <div class="inst-num">2</div>
+            <div class="inst-text">Each correct match increases score.</div>
+          </div>
+          <div class="inst-item">
+            <div class="inst-num">3</div>
+            <div class="inst-text">Timer counts down. If it reaches 0, you lose a life.</div>
+          </div>
+          <div class="inst-item">
+            <div class="inst-num">4</div>
+            <div class="inst-text">After all lives are lost, Banana API recovery appears.</div>
+          </div>
+          <div class="inst-item">
+            <div class="inst-num">5</div>
+            <div class="inst-text">Solve Banana puzzle to restore lives and continue.</div>
+          </div>
         </div>
 
         <a href="#" class="modal-play-btn" id="modalPlay">START PLAYING ▶</a>
@@ -193,6 +208,7 @@
       <button id="backToMenuBtn" class="game-back-btn">Back to Menu</button>
     </div>
 
+    <!-- LOGIN / SIGNUP -->
     <div id="loginBox" class="login-box">
       <h2 class="panel-title">PLAYER LOGIN</h2>
 
@@ -204,25 +220,52 @@
         <input id="password" type="password" placeholder="Password" />
       </div>
 
-      <button id="loginBtn" class="primary-btn">LOGIN</button>
+      <div class="input-group">
+        <input id="pin" type="password" placeholder="Security PIN (4 digits)" maxlength="4" />
+      </div>
+
+      <button id="loginBtn" class="primary-btn" type="button">LOGIN</button>
+      <button id="signupBtn" class="primary-btn" type="button">SIGN UP</button>
+
       <p id="loginMsg" class="form-msg"></p>
     </div>
 
+    <!-- WELCOME -->
     <div id="welcomeBar" class="welcome-bar hidden">
       <p id="welcomeText"></p>
-      <button id="logoutBtn" class="logout-btn">Logout</button>
+      <button id="logoutBtn" class="logout-btn" type="button">Logout</button>
     </div>
 
+    <!-- GAME AREA -->
     <div id="gameArea" class="game-area hidden">
       <div class="hud hud-6">
-        <div class="hud-card"><span class="hud-label">MOVES</span><strong id="moves">0</strong></div>
-        <div class="hud-card"><span class="hud-label">SCORE</span><strong id="score">0</strong></div>
-        <div class="hud-card"><span class="hud-label">LIVES</span><strong id="lives">3</strong></div>
-        <div class="hud-card"><span class="hud-label">TIME</span><strong><span id="time">60</span>s</strong></div>
-        <div class="hud-card"><span class="hud-label">LEVEL</span><strong id="level">1</strong></div>
+        <div class="hud-card">
+          <span class="hud-label">MOVES</span>
+          <strong id="moves">0</strong>
+        </div>
+
+        <div class="hud-card">
+          <span class="hud-label">SCORE</span>
+          <strong id="score">0</strong>
+        </div>
+
+        <div class="hud-card">
+          <span class="hud-label">LIVES</span>
+          <strong id="lives">3</strong>
+        </div>
+
+        <div class="hud-card">
+          <span class="hud-label">TIME</span>
+          <strong><span id="time">60</span>s</strong>
+        </div>
+
+        <div class="hud-card">
+          <span class="hud-label">LEVEL</span>
+          <strong id="level">1</strong>
+        </div>
 
         <div class="hud-card hud-action-card">
-          <button id="pauseBtn" class="pause-btn">⏸ Pause</button>
+          <button id="pauseBtn" class="pause-btn" type="button">⏸ Pause</button>
         </div>
       </div>
 
@@ -248,16 +291,16 @@
 
       <div class="banana-input">
         <input id="bananaAnswer" type="number" placeholder="Enter answer" />
-        <button id="bananaSubmit">SUBMIT</button>
+        <button id="bananaSubmit" type="button">SUBMIT</button>
       </div>
     </div>
 
-    <!-- Level Complete Modal (NO background animations) -->
+    <!-- Level Complete Modal -->
     <div id="levelCompleteModal" class="level-complete-modal hidden">
       <div class="level-complete-backdrop static-backdrop"></div>
 
       <div class="level-complete-card neon-card">
-        <button id="closeLevelModal" class="close-level-modal">✕</button>
+        <button id="closeLevelModal" class="close-level-modal" type="button">✕</button>
 
         <div class="ribbon-banner neon-ribbon">LEVEL CLEARED</div>
 
@@ -273,7 +316,7 @@
           <span class="star-icon static-star">★</span>
         </div>
 
-        <button id="nextLevelBtn" class="next-level-btn neon-btn">Next Level →</button>
+        <button id="nextLevelBtn" class="next-level-btn neon-btn" type="button">Next Level →</button>
       </div>
     </div>
 
@@ -283,10 +326,9 @@
       <div class="pause-card">
         <h2>GAME PAUSED</h2>
         <p>Click resume to continue.</p>
-        <button id="resumeBtn" class="resume-btn">Resume</button>
+        <button id="resumeBtn" class="resume-btn" type="button">Resume</button>
       </div>
     </div>
-
   </section>
 
   <script src="script.js"></script>
