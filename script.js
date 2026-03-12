@@ -218,6 +218,18 @@ const pauseBtn = document.getElementById("pauseBtn");
 const pauseModal = document.getElementById("pauseModal");
 const resumeBtn = document.getElementById("resumeBtn");
 
+// ===== SOUND =====
+const clickSound = new Audio("sounds/buttonPress.mp3");
+const flipSound = new Audio("sounds/flipcard.mp3");
+const wrongSound = new Audio("sounds/error.mp3");
+const levelUpSound = new Audio("sounds/levelCleared.mp3");
+
+function playSound(sound) {
+  if (!sound) return;
+  sound.currentTime = 0;
+  sound.play().catch(() => {});
+}
+
 // ===== CURSOR HOVER =====
 document.querySelectorAll("a, button, .demo-tile, .diff-badge, .modal-close, input").forEach((el) => {
   el.addEventListener("mouseenter", () => {
@@ -226,6 +238,11 @@ document.querySelectorAll("a, button, .demo-tile, .diff-badge, .modal-close, inp
   el.addEventListener("mouseleave", () => {
     if (cursor) cursor.style.transform = "translate(-50%,-50%) scale(1)";
   });
+});
+
+// ===== GLOBAL CLICK SOUND =====
+document.querySelectorAll("button, a").forEach((el) => {
+  el.addEventListener("click", () => playSound(clickSound));
 });
 
 // ===== AUTH HELPERS =====
@@ -381,7 +398,7 @@ function updateLoginUI() {
     const bestScore = users[user]?.bestScore ?? 0;
     loginBox.classList.add("hidden");
     welcomeBar.classList.remove("hidden");
-    welcomeText.textContent = `Welcome, ${user}!  💥Best Score: ${bestScore}💥`;
+    welcomeText.textContent = `Welcome, ${user}! 💥Best Score: ${bestScore}💥`;
     gameArea.classList.remove("hidden");
   } else {
     loginBox.classList.remove("hidden");
@@ -490,6 +507,7 @@ loginBtn?.addEventListener("click", () => {
 
   if (users[username].password !== password) {
     loginMsg.textContent = "Incorrect password.";
+    playSound(wrongSound);
     return;
   }
 
@@ -503,6 +521,7 @@ loginBtn?.addEventListener("click", () => {
 
     if (users[username].pin !== pin) {
       loginMsg.textContent = "Wrong PIN. Access denied.";
+      playSound(wrongSound);
       return;
     }
 
@@ -672,10 +691,12 @@ function handleTimeout() {
 
   if (lives > 0) {
     showStatus("Time out! You lost 1 life.", "warning");
+    playSound(wrongSound);
     restartLevel();
     return;
   }
 
+  playSound(wrongSound);
   showBananaChallenge("No lives left! Solve this Banana challenge to continue.");
 }
 
@@ -734,6 +755,7 @@ bananaSubmit?.addEventListener("click", () => {
     restartLevel(true);
   } else {
     bananaMsg.textContent = "Wrong answer. Try again.";
+    playSound(wrongSound);
     fetchBananaQuestion();
   }
 });
@@ -798,6 +820,7 @@ function handleTriviaAnswer(selectedAnswer) {
     nextLevelBonusTime = 0;
     triviaMsg.textContent = "Wrong answer. No bonus time.";
     triviaMsg.className = "trivia-msg status-msg error";
+    playSound(wrongSound);
   }
 
   triviaActive = false;
@@ -838,6 +861,7 @@ function showLevelCompleteModal() {
 
   lockBoard = true;
   levelCompleteModal.classList.remove("hidden");
+  playSound(levelUpSound);
 }
 
 function hideLevelCompleteModal() {
@@ -876,6 +900,7 @@ function handleCardClick(card) {
   if (!card.classList.contains("is-hidden")) return;
 
   card.classList.remove("is-hidden");
+  playSound(flipSound);
 
   if (!firstCard) {
     firstCard = card;
@@ -910,6 +935,8 @@ function checkForMatch() {
       checkLevelComplete();
     }, 600);
   } else {
+    playSound(wrongSound);
+
     setTimeout(() => {
       firstCard.classList.add("is-hidden");
       secondCard.classList.add("is-hidden");
