@@ -1,15 +1,15 @@
 // ===== CURSOR =====
-const cursor = document.getElementById('cursor');
-const dot = document.getElementById('cursorDot');
+const cursor = document.getElementById("cursor");
+const dot = document.getElementById("cursorDot");
 
 let mx = 0, my = 0, cx = 0, cy = 0;
 
-document.addEventListener('mousemove', e => {
+document.addEventListener("mousemove", (e) => {
   mx = e.clientX;
   my = e.clientY;
   if (dot) {
-    dot.style.left = mx + 'px';
-    dot.style.top = my + 'px';
+    dot.style.left = `${mx}px`;
+    dot.style.top = `${my}px`;
   }
 });
 
@@ -17,16 +17,18 @@ document.addEventListener('mousemove', e => {
   cx += (mx - cx) * 0.12;
   cy += (my - cy) * 0.12;
   if (cursor) {
-    cursor.style.left = cx + 'px';
-    cursor.style.top = cy + 'px';
+    cursor.style.left = `${cx}px`;
+    cursor.style.top = `${cy}px`;
   }
   requestAnimationFrame(animateCursor);
 })();
 
 // ===== PARTICLES =====
-const canvas = document.getElementById('particles');
-const ctx = canvas ? canvas.getContext('2d') : null;
-let W = 0, H = 0, pts = [];
+const canvas = document.getElementById("particles");
+const ctx = canvas ? canvas.getContext("2d") : null;
+let W = 0;
+let H = 0;
+let pts = [];
 
 function resizeCanvas() {
   if (!canvas) return;
@@ -34,7 +36,7 @@ function resizeCanvas() {
   H = canvas.height = window.innerHeight;
 }
 resizeCanvas();
-window.addEventListener('resize', resizeCanvas);
+window.addEventListener("resize", resizeCanvas);
 
 if (canvas && ctx) {
   for (let i = 0; i < 80; i++) {
@@ -45,14 +47,14 @@ if (canvas && ctx) {
       vy: (Math.random() - 0.5) * 0.3,
       r: Math.random() * 1.5 + 0.3,
       a: Math.random(),
-      color: Math.random() > 0.5 ? '124,58,237' : '34,211,238'
+      color: Math.random() > 0.5 ? "124,58,237" : "34,211,238"
     });
   }
 
   function drawParticles() {
     ctx.clearRect(0, 0, W, H);
 
-    pts.forEach(p => {
+    pts.forEach((p) => {
       p.x += p.vx;
       p.y += p.vy;
 
@@ -106,22 +108,22 @@ function animateCounter(el, target, duration = 1600) {
 }
 
 setTimeout(() => {
-  document.querySelectorAll('[data-target]').forEach(el => {
+  document.querySelectorAll("[data-target]").forEach((el) => {
     animateCounter(el, parseInt(el.dataset.target, 10));
   });
 }, 900);
 
-// ===== TILE ENTRY =====
-const style = document.createElement('style');
-style.textContent = `
+// ===== DEMO TILE ENTRY =====
+const injectedStyle = document.createElement("style");
+injectedStyle.textContent = `
 @keyframes tileIn {
-  from { opacity:0; transform: scale(0.6) rotateY(90deg); }
-  to { opacity:1; transform: scale(1) rotateY(0deg); }
+  from { opacity: 0; transform: scale(0.6) rotateY(90deg); }
+  to { opacity: 1; transform: scale(1) rotateY(0deg); }
 }`;
-document.head.appendChild(style);
+document.head.appendChild(injectedStyle);
 
-// ===== TILE AUTO FLIP DEMO =====
-const tileInners = document.querySelectorAll('.tile .tile-inner');
+// ===== DEMO TILE AUTO FLIP =====
+const tileInners = document.querySelectorAll(".demo-tile .tile-inner");
 let autoFlipIdx = 0;
 let activeDemo = null;
 
@@ -129,18 +131,18 @@ setInterval(() => {
   if (tileInners.length === 0) return;
 
   if (activeDemo !== null && tileInners[activeDemo]) {
-    tileInners[activeDemo].style.transform = '';
+    tileInners[activeDemo].style.transform = "";
   }
 
   activeDemo = autoFlipIdx;
 
   if (tileInners[autoFlipIdx]) {
-    tileInners[autoFlipIdx].style.transform = 'rotateY(180deg)';
+    tileInners[autoFlipIdx].style.transform = "rotateY(180deg)";
   }
 
   setTimeout(() => {
     if (tileInners[autoFlipIdx]) {
-      tileInners[autoFlipIdx].style.transform = '';
+      tileInners[autoFlipIdx].style.transform = "";
     }
     activeDemo = null;
   }, 1200);
@@ -149,27 +151,21 @@ setInterval(() => {
 }, 2000);
 
 // ===== MODAL =====
-const overlay = document.getElementById('modalOverlay');
-const openInstructions = document.getElementById('openInstructions');
-const modalClose = document.getElementById('modalClose');
-const modalPlay = document.getElementById('modalPlay');
+const overlay = document.getElementById("modalOverlay");
+const openInstructions = document.getElementById("openInstructions");
+const modalClose = document.getElementById("modalClose");
+const modalPlay = document.getElementById("modalPlay");
 
-if (openInstructions) {
-  openInstructions.addEventListener('click', e => {
-    e.preventDefault();
-    overlay?.classList.add('active');
-  });
-}
+openInstructions?.addEventListener("click", (e) => {
+  e.preventDefault();
+  overlay?.classList.add("active");
+});
 
-if (modalClose) {
-  modalClose.addEventListener('click', () => overlay?.classList.remove('active'));
-}
+modalClose?.addEventListener("click", () => overlay?.classList.remove("active"));
 
-if (overlay) {
-  overlay.addEventListener('click', e => {
-    if (e.target === overlay) overlay.classList.remove('active');
-  });
-}
+overlay?.addEventListener("click", (e) => {
+  if (e.target === overlay) overlay.classList.remove("active");
+});
 
 // ===== DOM =====
 const landingPage = document.getElementById("landingPage");
@@ -212,17 +208,23 @@ const completedScoreText = document.getElementById("completedScoreText");
 const nextLevelBtn = document.getElementById("nextLevelBtn");
 const closeLevelModal = document.getElementById("closeLevelModal");
 
+const bonusTimeBtn = document.getElementById("bonusTimeBtn");
+const triviaBox = document.getElementById("triviaBox");
+const triviaQuestion = document.getElementById("triviaQuestion");
+const triviaAnswers = document.getElementById("triviaAnswers");
+const triviaMsg = document.getElementById("triviaMsg");
+
 const pauseBtn = document.getElementById("pauseBtn");
 const pauseModal = document.getElementById("pauseModal");
 const resumeBtn = document.getElementById("resumeBtn");
 
 // ===== CURSOR HOVER =====
-document.querySelectorAll('a, button, .tile, .diff-badge, .modal-close, input, .next-level-btn, .close-level-modal, .pause-btn, .resume-btn').forEach(el => {
-  el.addEventListener('mouseenter', () => {
-    if (cursor) cursor.style.transform = 'translate(-50%,-50%) scale(1.6)';
+document.querySelectorAll("a, button, .demo-tile, .diff-badge, .modal-close, input").forEach((el) => {
+  el.addEventListener("mouseenter", () => {
+    if (cursor) cursor.style.transform = "translate(-50%,-50%) scale(1.6)";
   });
-  el.addEventListener('mouseleave', () => {
-    if (cursor) cursor.style.transform = 'translate(-50%,-50%) scale(1)';
+  el.addEventListener("mouseleave", () => {
+    if (cursor) cursor.style.transform = "translate(-50%,-50%) scale(1)";
   });
 });
 
@@ -237,24 +239,19 @@ function saveUsers(users) {
 
 function getDeviceId() {
   let id = localStorage.getItem("bm_device_id");
-
   if (!id) {
-    if (window.crypto && crypto.randomUUID) {
-      id = crypto.randomUUID();
-    } else {
-      id = "dev_" + Date.now() + "_" + Math.random().toString(16).slice(2);
-    }
+    id = window.crypto && crypto.randomUUID
+      ? crypto.randomUUID()
+      : `dev_${Date.now()}_${Math.random().toString(16).slice(2)}`;
     localStorage.setItem("bm_device_id", id);
   }
-
   return id;
 }
 
 function generateToken() {
-  if (window.crypto && crypto.randomUUID) {
-    return "bm_" + crypto.randomUUID();
-  }
-  return "bm_" + Date.now() + "_" + Math.random().toString(16).slice(2);
+  return window.crypto && crypto.randomUUID
+    ? `bm_${crypto.randomUUID()}`
+    : `bm_${Date.now()}_${Math.random().toString(16).slice(2)}`;
 }
 
 function loadSessions() {
@@ -280,7 +277,6 @@ function clearSessionToken() {
 function getCurrentUserFromToken() {
   const token = getSessionToken();
   if (!token) return null;
-
   const sessions = loadSessions();
   return sessions[token] || null;
 }
@@ -298,7 +294,6 @@ function invalidateCurrentSession() {
     delete sessions[token];
     saveSessions(sessions);
   }
-
   clearSessionToken();
 }
 
@@ -309,8 +304,8 @@ function updateBestScore() {
   const users = loadUsers();
   if (!users[user]) return;
 
-  const currentBest = Number(users[user].bestScore || 0);
-  if (score > currentBest) {
+  const best = Number(users[user].bestScore || 0);
+  if (score > best) {
     users[user].bestScore = score;
     saveUsers(users);
   }
@@ -326,20 +321,24 @@ let isPaused = false;
 
 let moves = 0;
 let score = 0;
-let lives = 3;
+let lives = 0;
 let level = 1;
 
-let timeLeft = 60;
+let timeLeft = 0;
 let timerId = null;
 
 let currentBananaSolution = null;
 let challengeActive = false;
-let values = [];
+
+let nextLevelBonusTime = 0;
+let triviaBonusUsed = false;
+let triviaActive = false;
+let currentTriviaAnswer = "";
 
 const levelSettings = {
-  1: { pairs: 4, time: 45 },
-  2: { pairs: 6, time: 50 },
-  3: { pairs: 8, time: 60 }
+  1: { pairs: 4, time: 20, lives: 2 },
+  2: { pairs: 6, time: 35, lives: 2 },
+  3: { pairs: 8, time: 45, lives: 3 }
 };
 
 const emojiPool = [
@@ -355,16 +354,14 @@ const emojiPool = [
 
 // ===== UI =====
 function updateHUD() {
-  if (movesEl) movesEl.textContent = moves;
-  if (scoreEl) scoreEl.textContent = score;
-  if (livesEl) livesEl.textContent = lives;
-  if (timeEl) timeEl.textContent = timeLeft;
-  if (levelEl) levelEl.textContent = level;
+  movesEl.textContent = moves;
+  scoreEl.textContent = score;
+  livesEl.textContent = lives;
+  timeEl.textContent = timeLeft;
+  levelEl.textContent = level;
 }
 
 function showStatus(text, type = "success") {
-  if (!statusMsg) return;
-
   statusMsg.textContent = text;
   statusMsg.className = `status-msg ${type}`;
 
@@ -373,29 +370,27 @@ function showStatus(text, type = "success") {
       statusMsg.textContent = "";
       statusMsg.className = "status-msg";
     }
-  }, 1800);
+  }, 2200);
 }
 
 function updateLoginUI() {
   const user = getCurrentUserFromToken();
 
   if (user) {
-    loginBox?.classList.add("hidden");
-    welcomeBar?.classList.remove("hidden");
-    if (welcomeText) {
-      const users = loadUsers();
-      const bestScore = users[user]?.bestScore ?? 0;
-      welcomeText.textContent = `Welcome, ${user}! ✅ Best Score: ${bestScore}`;
-    }
-    gameArea?.classList.remove("hidden");
+    const users = loadUsers();
+    const bestScore = users[user]?.bestScore ?? 0;
+    loginBox.classList.add("hidden");
+    welcomeBar.classList.remove("hidden");
+    welcomeText.textContent = `Welcome, ${user}!  💥Best Score: ${bestScore}💥`;
+    gameArea.classList.remove("hidden");
   } else {
-    loginBox?.classList.remove("hidden");
-    welcomeBar?.classList.add("hidden");
-    gameArea?.classList.add("hidden");
+    loginBox.classList.remove("hidden");
+    welcomeBar.classList.add("hidden");
+    gameArea.classList.add("hidden");
   }
 }
 
-// ===== LANDING PAGE =====
+// ===== LANDING =====
 diffBadges.forEach((badge) => {
   badge.addEventListener("click", () => {
     diffBadges.forEach((b) => b.classList.remove("active"));
@@ -412,8 +407,8 @@ function setLevelFromDifficulty() {
 
 function openGameScreen() {
   setLevelFromDifficulty();
-  landingPage?.classList.add("hidden");
-  gameContainer?.classList.remove("hidden");
+  landingPage.classList.add("hidden");
+  gameContainer.classList.remove("hidden");
   updateLoginUI();
 
   if (isLoggedIn()) startFreshGame();
@@ -424,97 +419,93 @@ playNowBtn?.addEventListener("click", (e) => {
   openGameScreen();
 });
 
-modalPlay?.addEventListener('click', e => {
+modalPlay?.addEventListener("click", (e) => {
   e.preventDefault();
-  overlay?.classList.remove('active');
+  overlay?.classList.remove("active");
   openGameScreen();
 });
 
 homeBtn?.addEventListener("click", (e) => {
   e.preventDefault();
-  landingPage?.scrollIntoView({ behavior: "smooth" });
+  landingPage.scrollIntoView({ behavior: "smooth" });
 });
 
 backToMenuBtn?.addEventListener("click", () => {
   stopAll();
-  gameContainer?.classList.add("hidden");
-  landingPage?.classList.remove("hidden");
-  if (statusMsg) statusMsg.textContent = "";
+  gameContainer.classList.add("hidden");
+  landingPage.classList.remove("hidden");
+  statusMsg.textContent = "";
 });
 
-// ===== SIGN UP =====
+// ===== SIGN UP / LOGIN =====
 signupBtn?.addEventListener("click", () => {
-  const username = usernameEl?.value.trim() || "";
-  const password = passwordEl?.value.trim() || "";
-  const pin = pinEl?.value.trim() || "";
+  const username = usernameEl.value.trim();
+  const password = passwordEl.value.trim();
+  const pin = pinEl.value.trim();
 
   if (!username || !password || !pin) {
-    if (loginMsg) loginMsg.textContent = "Enter username, password, and 4-digit PIN.";
+    loginMsg.textContent = "Enter username, password, and 4-digit PIN.";
     return;
   }
 
   if (!/^\d{4}$/.test(pin)) {
-    if (loginMsg) loginMsg.textContent = "PIN must be exactly 4 digits.";
+    loginMsg.textContent = "PIN must be exactly 4 digits.";
     return;
   }
 
   const users = loadUsers();
 
   if (users[username]) {
-    if (loginMsg) loginMsg.textContent = "Username already exists.";
+    loginMsg.textContent = "Username already exists.";
     return;
   }
 
   users[username] = {
-    password: password,
-    pin: pin,
+    password,
+    pin,
     trustedDeviceId: getDeviceId(),
     bestScore: 0
   };
 
   saveUsers(users);
-
-  if (loginMsg) loginMsg.textContent = "Account created! Now click LOGIN.";
+  loginMsg.textContent = "Account created! Now click LOGIN.";
 });
 
-// ===== LOGIN =====
 loginBtn?.addEventListener("click", () => {
-  const username = usernameEl?.value.trim() || "";
-  const password = passwordEl?.value.trim() || "";
-  const pin = pinEl?.value.trim() || "";
+  const username = usernameEl.value.trim();
+  const password = passwordEl.value.trim();
+  const pin = pinEl.value.trim();
 
   if (!username || !password) {
-    if (loginMsg) loginMsg.textContent = "Enter username and password.";
+    loginMsg.textContent = "Enter username and password.";
     return;
   }
 
   const users = loadUsers();
 
   if (!users[username]) {
-    if (loginMsg) loginMsg.textContent = "User not found. Please SIGN UP first.";
+    loginMsg.textContent = "User not found. Please SIGN UP first.";
     return;
   }
 
   if (users[username].password !== password) {
-    if (loginMsg) loginMsg.textContent = "Incorrect password.";
+    loginMsg.textContent = "Incorrect password.";
     return;
   }
 
   const currentDeviceId = getDeviceId();
 
-  // New device => require PIN
   if (users[username].trustedDeviceId && users[username].trustedDeviceId !== currentDeviceId) {
     if (!pin) {
-      if (loginMsg) loginMsg.textContent = "New device detected. Enter your 4-digit PIN.";
+      loginMsg.textContent = "New device detected. Enter your 4-digit PIN.";
       return;
     }
 
     if (users[username].pin !== pin) {
-      if (loginMsg) loginMsg.textContent = "Wrong PIN. Access denied.";
+      loginMsg.textContent = "Wrong PIN. Access denied.";
       return;
     }
 
-    // Trust this device after correct PIN
     users[username].trustedDeviceId = currentDeviceId;
     saveUsers(users);
   }
@@ -525,12 +516,11 @@ loginBtn?.addEventListener("click", () => {
   saveSessions(sessions);
   setSessionToken(token);
 
-  if (loginMsg) loginMsg.textContent = "";
+  loginMsg.textContent = "";
   updateLoginUI();
   startFreshGame();
 });
 
-// ===== LOGOUT =====
 logoutBtn?.addEventListener("click", () => {
   updateBestScore();
   invalidateCurrentSession();
@@ -541,19 +531,19 @@ logoutBtn?.addEventListener("click", () => {
 
 // ===== PAUSE =====
 function showPauseModal() {
-  pauseModal?.classList.remove("hidden");
+  pauseModal.classList.remove("hidden");
 }
 
 function hidePauseModal() {
-  pauseModal?.classList.add("hidden");
+  pauseModal.classList.add("hidden");
 }
 
 function pauseGame() {
   if (isPaused) return;
   if (!isLoggedIn()) return;
-  if (gameArea?.classList.contains("hidden")) return;
-  if (!bananaPanel?.classList.contains("hidden")) return;
-  if (!levelCompleteModal?.classList.contains("hidden")) return;
+  if (gameArea.classList.contains("hidden")) return;
+  if (!bananaPanel.classList.contains("hidden")) return;
+  if (!levelCompleteModal.classList.contains("hidden")) return;
 
   isPaused = true;
   lockBoard = true;
@@ -573,24 +563,30 @@ function resumeGame() {
 pauseBtn?.addEventListener("click", pauseGame);
 resumeBtn?.addEventListener("click", resumeGame);
 
-// ===== GAME =====
+// ===== GAME START / LEVEL SETUP =====
 function startFreshGame() {
   moves = 0;
   score = 0;
-  lives = 3;
   isPaused = false;
+  nextLevelBonusTime = 0;
 
   hideBananaChallenge();
   hideLevelCompleteModal();
   hidePauseModal();
 
-  applyLevelSettings();
-  buildBoard();
+  startLevel(level, true, 0);
 }
 
-function applyLevelSettings() {
-  const settings = levelSettings[level];
-  resetTimer(settings.time);
+function startLevel(targetLevel, resetLives, bonusTime) {
+  const settings = levelSettings[targetLevel];
+  level = targetLevel;
+
+  if (resetLives) {
+    lives = settings.lives;
+  }
+
+  resetTimer(settings.time + bonusTime);
+  buildBoard();
   updateHUD();
 }
 
@@ -598,14 +594,14 @@ function buildBoard() {
   const settings = levelSettings[level];
   const selected = emojiPool.slice(0, settings.pairs);
 
-  values = [];
-  selected.forEach(item => {
+  const values = [];
+  selected.forEach((item) => {
     values.push(item.id);
     values.push(item.id);
   });
 
   values.sort(() => Math.random() - 0.5);
-  if (gameBoard) gameBoard.innerHTML = "";
+  gameBoard.innerHTML = "";
 
   values.forEach((id) => {
     const card = document.createElement("div");
@@ -628,23 +624,20 @@ function buildBoard() {
 
     const emoji = document.createElement("div");
     emoji.classList.add("card-emoji");
-    const found = selected.find(x => x.id === id);
-    emoji.textContent = found ? found.icon : "🍌";
+    emoji.textContent = selected.find((x) => x.id === id)?.icon || "🍌";
 
     front.appendChild(cover);
     back.appendChild(emoji);
-
     inner.appendChild(front);
     inner.appendChild(back);
     card.appendChild(inner);
 
     card.addEventListener("click", () => handleCardClick(card));
-    gameBoard?.appendChild(card);
+    gameBoard.appendChild(card);
   });
 
   resetTurn();
   startTimer();
-  updateHUD();
 }
 
 // ===== TIMER =====
@@ -656,14 +649,14 @@ function startTimer() {
 
     if (timeLeft <= 0) {
       timeLeft = 0;
-      if (timeEl) timeEl.textContent = timeLeft;
+      updateHUD();
       clearInterval(timerId);
       timerId = null;
       handleTimeout();
       return;
     }
 
-    if (timeEl) timeEl.textContent = timeLeft;
+    updateHUD();
   }, 1000);
 }
 
@@ -671,7 +664,6 @@ function resetTimer(newTime) {
   clearInterval(timerId);
   timerId = null;
   timeLeft = newTime;
-  if (timeEl) timeEl.textContent = timeLeft;
 }
 
 function handleTimeout() {
@@ -679,7 +671,7 @@ function handleTimeout() {
   updateHUD();
 
   if (lives > 0) {
-    showStatus("Time out! 1 life lost.", "warning");
+    showStatus("Time out! You lost 1 life.", "warning");
     restartLevel();
     return;
   }
@@ -694,10 +686,10 @@ function showBananaChallenge(reasonText) {
   lockBoard = true;
   challengeActive = true;
 
-  if (bananaMsg) bananaMsg.textContent = reasonText + " (Loading...)";
-  if (bananaAnswer) bananaAnswer.value = "";
-  if (bananaImg) bananaImg.src = "";
-  bananaPanel?.classList.remove("hidden");
+  bananaMsg.textContent = `${reasonText} (Loading...)`;
+  bananaAnswer.value = "";
+  bananaImg.src = "";
+  bananaPanel.classList.remove("hidden");
 
   fetchBananaQuestion();
 }
@@ -705,20 +697,20 @@ function showBananaChallenge(reasonText) {
 async function fetchBananaQuestion() {
   try {
     const res = await fetch("https://marcconrad.com/uob/banana/api.php", { cache: "no-store" });
-    if (!res.ok) throw new Error("HTTP " + res.status);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
     const data = await res.json();
-    if (bananaImg) bananaImg.src = data.question;
+    bananaImg.src = data.question;
     currentBananaSolution = String(data.solution);
-    if (bananaMsg) bananaMsg.textContent = "Solve the banana question to restore lives.";
-  } catch (err) {
-    if (bananaMsg) bananaMsg.textContent = "Failed to load Banana API. Check internet and try again.";
+    bananaMsg.textContent = "Solve the banana question to restore lives.";
+  } catch {
+    bananaMsg.textContent = "Failed to load Banana API. Check internet and try again.";
     currentBananaSolution = null;
   }
 }
 
 function hideBananaChallenge() {
-  bananaPanel?.classList.add("hidden");
+  bananaPanel.classList.add("hidden");
   challengeActive = false;
   lockBoard = false;
 }
@@ -727,54 +719,153 @@ bananaSubmit?.addEventListener("click", () => {
   if (!challengeActive) return;
 
   if (currentBananaSolution === null) {
-    if (bananaMsg) bananaMsg.textContent = "No question loaded. Please try again.";
+    bananaMsg.textContent = "No question loaded. Please try again.";
     fetchBananaQuestion();
     return;
   }
 
-  const userAns = String(bananaAnswer?.value || "").trim();
+  const userAns = String(bananaAnswer.value || "").trim();
 
   if (userAns === currentBananaSolution) {
     hideBananaChallenge();
-    lives = 3;
+    lives = levelSettings[level].lives;
     updateHUD();
     showStatus("Correct! Lives restored.", "success");
-    restartLevel();
+    restartLevel(true);
   } else {
-    if (bananaMsg) bananaMsg.textContent = "Wrong answer. Try again.";
+    bananaMsg.textContent = "Wrong answer. Try again.";
     fetchBananaQuestion();
   }
 });
 
+// ===== TRIVIA BONUS =====
+function decodeHtml(text) {
+  const txt = document.createElement("textarea");
+  txt.innerHTML = text;
+  return txt.value;
+}
+
+async function fetchTriviaQuestion() {
+  try {
+    triviaActive = true;
+    triviaMsg.textContent = "Loading question...";
+    triviaBox.classList.remove("hidden");
+    triviaAnswers.innerHTML = "";
+
+    const res = await fetch("https://opentdb.com/api.php?amount=1&type=multiple");
+    const data = await res.json();
+
+    if (!data.results || data.results.length === 0) {
+      triviaMsg.textContent = "Could not load trivia question.";
+      return;
+    }
+
+    const q = data.results[0];
+    currentTriviaAnswer = decodeHtml(q.correct_answer);
+    triviaQuestion.textContent = decodeHtml(q.question);
+
+    const answers = [...q.incorrect_answers, q.correct_answer]
+      .map((a) => decodeHtml(a))
+      .sort(() => Math.random() - 0.5);
+
+    triviaAnswers.innerHTML = "";
+    answers.forEach((answer) => {
+      const btn = document.createElement("button");
+      btn.classList.add("trivia-answer-btn");
+      btn.textContent = answer;
+      btn.type = "button";
+      btn.addEventListener("click", () => handleTriviaAnswer(answer));
+      triviaAnswers.appendChild(btn);
+    });
+
+    triviaMsg.textContent = "";
+  } catch {
+    triviaMsg.textContent = "Could not load trivia question.";
+  }
+}
+
+function handleTriviaAnswer(selectedAnswer) {
+  if (!triviaActive) return;
+
+  const buttons = triviaAnswers.querySelectorAll("button");
+  buttons.forEach((btn) => btn.disabled = true);
+
+  if (selectedAnswer === currentTriviaAnswer) {
+    nextLevelBonusTime = 10;
+    triviaMsg.textContent = "Correct! You earned +10 seconds for the next level.";
+    triviaMsg.className = "trivia-msg status-msg success";
+  } else {
+    nextLevelBonusTime = 0;
+    triviaMsg.textContent = "Wrong answer. No bonus time.";
+    triviaMsg.className = "trivia-msg status-msg error";
+  }
+
+  triviaActive = false;
+  bonusTimeBtn.disabled = true;
+}
+
+bonusTimeBtn?.addEventListener("click", () => {
+  if (triviaBonusUsed || level >= 3) return;
+
+  triviaBonusUsed = true;
+  bonusTimeBtn.disabled = true;
+  fetchTriviaQuestion();
+});
+
 // ===== LEVEL COMPLETE MODAL =====
 function showLevelCompleteModal() {
-  if (completedLevelText) completedLevelText.textContent = level;
-  if (completedScoreText) completedScoreText.textContent = score;
-  if (nextLevelBtn) nextLevelBtn.textContent = level < 3 ? "Next Level →" : "Finish →";
+  completedLevelText.textContent = level;
+  completedScoreText.textContent = score;
+  nextLevelBtn.textContent = level < 3 ? "Next Level →" : "Finish →";
+
+  triviaBonusUsed = false;
+  triviaActive = false;
+  currentTriviaAnswer = "";
+  nextLevelBonusTime = 0;
+
+  triviaBox.classList.add("hidden");
+  triviaQuestion.textContent = "";
+  triviaAnswers.innerHTML = "";
+  triviaMsg.textContent = "";
+  triviaMsg.className = "trivia-msg";
+
+  if (level < 3) {
+    bonusTimeBtn.classList.remove("hidden");
+    bonusTimeBtn.disabled = false;
+  } else {
+    bonusTimeBtn.classList.add("hidden");
+  }
+
   lockBoard = true;
-  levelCompleteModal?.classList.remove("hidden");
+  levelCompleteModal.classList.remove("hidden");
 }
 
 function hideLevelCompleteModal() {
-  levelCompleteModal?.classList.add("hidden");
+  levelCompleteModal.classList.add("hidden");
   lockBoard = false;
 }
 
-nextLevelBtn?.addEventListener("click", () => {
+function goToNextLevelOrFinish() {
   hideLevelCompleteModal();
 
   if (level < 3) {
-    level++;
-    applyLevelSettings();
-    buildBoard();
-    showStatus("Next level started!", "success");
+    const nextLevel = level + 1;
+    const bonus = nextLevelBonusTime;
+    startLevel(nextLevel, true, bonus);
+
+    if (bonus > 0) {
+      showStatus("Bonus applied! +10 seconds added.", "success");
+    } else {
+      showStatus("Next level started!", "success");
+    }
   } else {
     updateBestScore();
     showStatus("You finished all levels! 🎉", "success");
   }
-});
+}
 
-closeLevelModal?.addEventListener("click", () => hideLevelCompleteModal());
+nextLevelBtn?.addEventListener("click", goToNextLevelOrFinish);
+closeLevelModal?.addEventListener("click", goToNextLevelOrFinish);
 
 // ===== GAMEPLAY =====
 function handleCardClick(card) {
@@ -793,7 +884,6 @@ function handleCardClick(card) {
 
   secondCard = card;
   lockBoard = true;
-
   moves++;
   updateHUD();
 
@@ -841,14 +931,18 @@ function checkLevelComplete() {
 }
 
 // ===== RESTART / STOP =====
-function restartLevel() {
+function restartLevel(fromRecovery = false) {
   clearInterval(timerId);
   timerId = null;
   isPaused = false;
   hidePauseModal();
   hideLevelCompleteModal();
-  applyLevelSettings();
-  buildBoard();
+
+  startLevel(level, false, 0);
+
+  if (fromRecovery) {
+    showStatus("Level restarted. Good luck!", "success");
+  }
 }
 
 function resetTurn() {
@@ -866,4 +960,5 @@ function stopAll() {
   hideLevelCompleteModal();
 }
 
+// ===== INITIAL =====
 updateLoginUI();
