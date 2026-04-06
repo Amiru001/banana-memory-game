@@ -1,4 +1,4 @@
-// ===== CURSOR =====
+
 const cursor = document.getElementById("cursor");
 const dot = document.getElementById("cursorDot");
 
@@ -23,7 +23,7 @@ document.addEventListener("mousemove", (e) => {
   requestAnimationFrame(animateCursor);
 })();
 
-// ===== PARTICLES =====
+
 const canvas = document.getElementById("particles");
 const ctx = canvas ? canvas.getContext("2d") : null;
 let W = 0;
@@ -92,7 +92,7 @@ if (canvas && ctx) {
   drawParticles();
 }
 
-// ===== COUNTERS =====
+
 function animateCounter(el, target, duration = 1600) {
   let start = null;
 
@@ -113,7 +113,7 @@ setTimeout(() => {
   });
 }, 900);
 
-// ===== DEMO TILE ENTRY =====
+// DEMO TILE
 const injectedStyle = document.createElement("style");
 injectedStyle.textContent = `
 @keyframes tileIn {
@@ -122,7 +122,7 @@ injectedStyle.textContent = `
 }`;
 document.head.appendChild(injectedStyle);
 
-// ===== DEMO TILE AUTO FLIP =====
+
 const tileInners = document.querySelectorAll(".demo-tile .tile-inner");
 let autoFlipIdx = 0;
 let activeDemo = null;
@@ -150,7 +150,7 @@ setInterval(() => {
   autoFlipIdx = (autoFlipIdx + 1) % tileInners.length;
 }, 2000);
 
-// ===== MODAL =====
+// MODAL 
 const overlay = document.getElementById("modalOverlay");
 const openInstructions = document.getElementById("openInstructions");
 const modalClose = document.getElementById("modalClose");
@@ -167,7 +167,7 @@ overlay?.addEventListener("click", (e) => {
   if (e.target === overlay) overlay.classList.remove("active");
 });
 
-// ===== DOM =====
+// DOM 
 const landingPage = document.getElementById("landingPage");
 const gameContainer = document.getElementById("gameContainer");
 const gameArea = document.getElementById("gameArea");
@@ -218,7 +218,7 @@ const pauseBtn = document.getElementById("pauseBtn");
 const pauseModal = document.getElementById("pauseModal");
 const resumeBtn = document.getElementById("resumeBtn");
 
-// ===== SOUND =====
+// SOUND 
 const clickSound = new Audio("sounds/buttonPress.mp3");
 const flipSound = new Audio("sounds/flipcard.mp3");
 const wrongSound = new Audio("sounds/error.mp3");
@@ -230,7 +230,7 @@ function playSound(sound) {
   sound.play().catch(() => {});
 }
 
-// ===== CURSOR HOVER =====
+// CURSOR HOVER
 document.querySelectorAll("a, button, .demo-tile, .diff-badge, .modal-close, input").forEach((el) => {
   el.addEventListener("mouseenter", () => {
     if (cursor) cursor.style.transform = "translate(-50%,-50%) scale(1.6)";
@@ -240,12 +240,12 @@ document.querySelectorAll("a, button, .demo-tile, .diff-badge, .modal-close, inp
   });
 });
 
-// ===== GLOBAL CLICK SOUND =====
+// CLICK SOUND 
 document.querySelectorAll("button, a").forEach((el) => {
   el.addEventListener("click", () => playSound(clickSound));
 });
 
-// ===== AUTH HELPERS =====
+// AUTH HELPERS
 function loadUsers() {
   return JSON.parse(localStorage.getItem("bm_users") || "{}");
 }
@@ -328,7 +328,7 @@ function updateBestScore() {
   }
 }
 
-// ===== GAME STATE =====
+
 let selectedDifficulty = "easy";
 
 let firstCard = null;
@@ -369,7 +369,7 @@ const emojiPool = [
   { id: 8, icon: "🥝" }
 ];
 
-// ===== UI =====
+// UI 
 function updateHUD() {
   movesEl.textContent = moves;
   scoreEl.textContent = score;
@@ -407,7 +407,7 @@ function updateLoginUI() {
   }
 }
 
-// ===== LANDING =====
+// LANDING 
 diffBadges.forEach((badge) => {
   badge.addEventListener("click", () => {
     diffBadges.forEach((b) => b.classList.remove("active"));
@@ -454,7 +454,7 @@ backToMenuBtn?.addEventListener("click", () => {
   statusMsg.textContent = "";
 });
 
-// ===== SIGN UP / LOGIN =====
+// SIGN UP/LOGIN 
 signupBtn?.addEventListener("click", () => {
   const username = usernameEl.value.trim();
   const password = passwordEl.value.trim();
@@ -548,7 +548,7 @@ logoutBtn?.addEventListener("click", () => {
   updateLoginUI();
 });
 
-// ===== PAUSE =====
+// PAUSE
 function showPauseModal() {
   pauseModal.classList.remove("hidden");
 }
@@ -582,7 +582,7 @@ function resumeGame() {
 pauseBtn?.addEventListener("click", pauseGame);
 resumeBtn?.addEventListener("click", resumeGame);
 
-// ===== GAME START / LEVEL SETUP =====
+// GAME START/LEVEL SETUP
 function startFreshGame() {
   moves = 0;
   score = 0;
@@ -659,7 +659,7 @@ function buildBoard() {
   startTimer();
 }
 
-// ===== TIMER =====
+// TIMER 
 function startTimer() {
   if (timerId || isPaused) return;
 
@@ -700,7 +700,7 @@ function handleTimeout() {
   showBananaChallenge("No lives left! Solve this Banana challenge to continue.");
 }
 
-// ===== BANANA CHALLENGE =====
+// BANANA CHALLENGE
 function showBananaChallenge(reasonText) {
   clearInterval(timerId);
   timerId = null;
@@ -760,7 +760,7 @@ bananaSubmit?.addEventListener("click", () => {
   }
 });
 
-// ===== TRIVIA BONUS =====
+// TRIVIA BONUS
 function decodeHtml(text) {
   const txt = document.createElement("textarea");
   txt.innerHTML = text;
@@ -835,7 +835,7 @@ bonusTimeBtn?.addEventListener("click", () => {
   fetchTriviaQuestion();
 });
 
-// ===== LEVEL COMPLETE MODAL =====
+// LEVEL COMPLETE MODAL
 function showLevelCompleteModal() {
   completedLevelText.textContent = level;
   completedScoreText.textContent = score;
@@ -891,7 +891,7 @@ function goToNextLevelOrFinish() {
 nextLevelBtn?.addEventListener("click", goToNextLevelOrFinish);
 closeLevelModal?.addEventListener("click", goToNextLevelOrFinish);
 
-// ===== GAMEPLAY =====
+// GAMEPLAY
 function handleCardClick(card) {
   if (lockBoard) return;
   if (isPaused) return;
@@ -957,7 +957,7 @@ function checkLevelComplete() {
   }
 }
 
-// ===== RESTART / STOP =====
+// RESTART/STOP
 function restartLevel(fromRecovery = false) {
   clearInterval(timerId);
   timerId = null;
@@ -987,5 +987,5 @@ function stopAll() {
   hideLevelCompleteModal();
 }
 
-// ===== INITIAL =====
+
 updateLoginUI();
