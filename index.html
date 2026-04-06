@@ -195,33 +195,41 @@
 
   <section id="gameContainer" class="hidden">
     <div class="game-topbar">
-      <div>
-        <p class="mini-label">BANANA MEMORY</p>
-        <h1 class="game-heading">MISSION BOARD</h1>
-      </div>
-      <button id="backToMenuBtn" class="game-back-btn" type="button">Back to Menu</button>
-    </div>
+  <div>
+    <p class="mini-label">BANANA MEMORY</p>
+    <h1 class="game-heading">MISSION BOARD</h1>
+  </div>
+
+  <div class="topbar-actions">
+    <a href="leaderboard.html" class="game-back-btn">Leaderboard</a>
+    <button id="backToMenuBtn" class="game-back-btn" type="button">Back to Menu</button>
+  </div>
+</div>
 
     <div id="loginBox" class="login-box">
-      <h2 class="panel-title">PLAYER LOGIN</h2>
+  <h2 class="panel-title" id="authTitle">PLAYER LOGIN</h2>
 
-      <div class="input-group">
-        <input id="username" type="text" placeholder="Username" />
-      </div>
+  <div class="input-group">
+    <input id="username" type="text" placeholder="Username" />
+  </div>
 
-      <div class="input-group">
-        <input id="password" type="password" placeholder="Password" />
-      </div>
+  <div class="input-group hidden" id="emailGroup">
+    <input id="email" type="email" placeholder="Email address" />
+  </div>
 
-      <div class="input-group">
-        <input id="pin" type="password" placeholder="Security PIN (4 digits)" maxlength="4" />
-      </div>
+  <div class="input-group">
+    <input id="password" type="password" placeholder="Password" />
+  </div>
 
-      <button id="loginBtn" class="primary-btn" type="button">LOGIN</button>
-      <button id="signupBtn" class="primary-btn secondary-login-btn" type="button">SIGN UP</button>
+  <button id="loginBtn" class="primary-btn" type="button">LOGIN</button>
+  <button id="signupBtn" class="primary-btn secondary-login-btn hidden" type="button">SIGN UP</button>
 
-      <p id="loginMsg" class="form-msg"></p>
-    </div>
+  <button id="toggleAuthMode" class="primary-btn secondary-login-btn auth-toggle-btn" type="button">
+  Create new account
+  </button>
+
+  <p id="loginMsg" class="form-msg"></p>
+</div>
 
     <div id="welcomeBar" class="welcome-bar hidden">
       <p id="welcomeText"></p>
@@ -329,6 +337,11 @@
     </div>
   </section>
 
+  <script src="js/sound.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/game.js"></script>
   <script src="script.js"></script>
 </body>
 </html>
