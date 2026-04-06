@@ -164,6 +164,8 @@ document.querySelectorAll("a, button, .demo-tile, .diff-badge, .modal-close, inp
   });
 });
 
+
+
 // ===== LANDING / UI EVENTS =====
 diffBadges.forEach((badge) => {
   badge.addEventListener("click", () => {
@@ -211,3 +213,5 @@ nextLevelBtn?.addEventListener("click", () => {
 closeLevelModal?.addEventListener("click", () => {
   goToNextLevelOrFinish();
 });
+
+

@@ -1,235 +1,263 @@
 const loginBox = document.getElementById("loginBox");
+const authTitle = document.getElementById("authTitle");
 const usernameEl = document.getElementById("username");
+const emailEl = document.getElementById("email");
+const emailGroup = document.getElementById("emailGroup");
 const passwordEl = document.getElementById("password");
-const pinEl = document.getElementById("pin");
 const loginBtn = document.getElementById("loginBtn");
 const signupBtn = document.getElementById("signupBtn");
+const toggleAuthModeBtn = document.getElementById("toggleAuthMode");
 const logoutBtn = document.getElementById("logoutBtn");
 const loginMsg = document.getElementById("loginMsg");
 const welcomeBar = document.getElementById("welcomeBar");
 const welcomeText = document.getElementById("welcomeText");
 
-// ===== AUTH HELPERS =====
-function loadUsers() {
-  return JSON.parse(localStorage.getItem("bm_users") || "{}");
-}
+// ===== CURRENT USER =====
+let currentUser = null;
+let isSignupMode = false;
 
-function saveUsers(users) {
-  localStorage.setItem("bm_users", JSON.stringify(users));
-}
 
-function getDeviceId() {
-  let id = localStorage.getItem("bm_device_id");
+function showVerificationMessageFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const verified = params.get("verified");
 
-  if (!id) {
-    id = window.crypto && crypto.randomUUID
-      ? crypto.randomUUID()
-      : `dev_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+  if (!verified) return;
 
-    localStorage.setItem("bm_device_id", id);
+  if (typeof landingPage !== "undefined" && landingPage) {
+    landingPage.classList.add("hidden");
   }
 
-  return id;
+  if (typeof gameContainer !== "undefined" && gameContainer) {
+    gameContainer.classList.remove("hidden");
+  }
+
+  if (loginBox) {
+    loginBox.classList.remove("hidden");
+  }
+
+  if (welcomeBar) {
+    welcomeBar.classList.add("hidden");
+  }
+
+  if (typeof gameArea !== "undefined" && gameArea) {
+    gameArea.classList.add("hidden");
+  }
+
+  setAuthMode("login");
+
+  if (verified === "success") {
+    loginMsg.textContent = "Email verified successfully. Please log in.";
+  } else if (verified === "invalid") {
+    loginMsg.textContent = "Invalid or expired verification link.";
+  } else if (verified === "error") {
+    loginMsg.textContent = "Verification failed. Please try again.";
+  }
+
+  const cleanUrl = window.location.pathname;
+  window.history.replaceState({}, document.title, cleanUrl);
 }
 
-function generateToken() {
-  return window.crypto && crypto.randomUUID
-    ? `bm_${crypto.randomUUID()}`
-    : `bm_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+// ===== MODE SWITCH =====
+function clearAuthFields() {
+  usernameEl.value = "";
+  if (emailEl) emailEl.value = "";
+  passwordEl.value = "";
+  loginMsg.innerHTML = "";
 }
 
-function loadSessions() {
-  return JSON.parse(localStorage.getItem("bm_sessions") || "{}");
+function setAuthMode(mode) {
+  isSignupMode = mode === "signup";
+
+  if (isSignupMode) {
+    authTitle.textContent = "PLAYER SIGN UP";
+    emailGroup.classList.remove("hidden");
+    loginBtn.classList.add("hidden");
+    signupBtn.classList.remove("hidden");
+    toggleAuthModeBtn.textContent = "Back to login";
+  } else {
+    authTitle.textContent = "PLAYER LOGIN";
+    emailGroup.classList.add("hidden");
+    loginBtn.classList.remove("hidden");
+    signupBtn.classList.add("hidden");
+    toggleAuthModeBtn.textContent = "Create new account";
+  }
+
+  loginMsg.innerHTML = "";
 }
 
-function saveSessions(sessions) {
-  localStorage.setItem("bm_sessions", JSON.stringify(sessions));
-}
+toggleAuthModeBtn?.addEventListener("click", () => {
+  clearAuthFields();
+  setAuthMode(isSignupMode ? "login" : "signup");
+});
 
-function setSessionToken(token) {
-  localStorage.setItem("bm_session_token", token);
-}
+// ===== AUTH HELPERS =====
+async function getCurrentUserFromSession() {
+  try {
+    const res = await fetch("get_user.php");
+    const data = await res.json();
 
-function getSessionToken() {
-  return localStorage.getItem("bm_session_token");
-}
+    if (data.success) {
+      currentUser = data.user;
+      return data.user;
+    }
 
-function clearSessionToken() {
-  localStorage.removeItem("bm_session_token");
-}
-
-function getCurrentUserFromToken() {
-  const token = getSessionToken();
-  if (!token) return null;
-
-  const sessions = loadSessions();
-  return sessions[token] || null;
+    currentUser = null;
+    return null;
+  } catch (error) {
+    currentUser = null;
+    return null;
+  }
 }
 
 function isLoggedIn() {
-  return getCurrentUserFromToken() !== null;
+  return currentUser !== null;
 }
 
-function invalidateCurrentSession() {
-  const token = getSessionToken();
-  if (!token) return;
+async function updateBestScore() {
+  if (!currentUser) return;
 
-  const sessions = loadSessions();
-
-  if (sessions[token]) {
-    delete sessions[token];
-    saveSessions(sessions);
-  }
-
-  clearSessionToken();
-}
-
-function updateBestScore() {
-  const user = getCurrentUserFromToken();
-  if (!user) return;
-
-  const users = loadUsers();
-  if (!users[user]) return;
-
-  const best = Number(users[user].bestScore || 0);
-
-  if (typeof score !== "undefined" && score > best) {
-    users[user].bestScore = score;
-    saveUsers(users);
+  try {
+    await fetch("save_score.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        score: score,
+        moves: moves
+      })
+    });
+  } catch (error) {
+    console.error("Failed to save best result");
   }
 }
 
 // ===== LOGIN UI =====
-function updateLoginUI() {
-  const user = getCurrentUserFromToken();
+async function updateLoginUI() {
+  const user = await getCurrentUserFromSession();
 
   if (user) {
-    const users = loadUsers();
-    const bestScore = users[user]?.bestScore ?? 0;
-
     loginBox?.classList.add("hidden");
     welcomeBar?.classList.remove("hidden");
 
     if (welcomeText) {
-      welcomeText.textContent = `Welcome, ${user}! 💥Best Score: ${bestScore}💥`;
+      welcomeText.textContent = `Welcome, ${user.username}! 💥Best Score: ${user.best_score}💥`;
     }
 
     if (typeof gameArea !== "undefined" && gameArea) {
       gameArea.classList.remove("hidden");
     }
-  } else {
+    } else {
     loginBox?.classList.remove("hidden");
     welcomeBar?.classList.add("hidden");
 
     if (typeof gameArea !== "undefined" && gameArea) {
       gameArea.classList.add("hidden");
     }
+
+    setAuthMode("login");
+    showVerificationMessageFromUrl();
   }
 }
 
 // ===== SIGN UP =====
-signupBtn?.addEventListener("click", () => {
+signupBtn?.addEventListener("click", async () => {
   const username = usernameEl.value.trim();
+  const email = emailEl.value.trim();
   const password = passwordEl.value.trim();
-  const pin = pinEl.value.trim();
 
-  if (!username || !password || !pin) {
-    loginMsg.textContent = "Enter username, password, and 4-digit PIN.";
+  if (!username || !email || !password) {
+    loginMsg.textContent = "Enter username, email, and password.";
     return;
   }
 
-  if (!/^\d{4}$/.test(pin)) {
-    loginMsg.textContent = "PIN must be exactly 4 digits.";
-    return;
+  try {
+    const res = await fetch("signup.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        username,
+        email,
+        password
+      })
+    });
+
+    const data = await res.json();
+
+    if (data.success) {
+      loginMsg.textContent = "Signup successful. Please check your email and verify your account.";
+    } else {
+      loginMsg.textContent = data.message;
+      playSound(wrongSound);
+    }
+  } catch (error) {
+    loginMsg.textContent = "Signup request failed.";
+    playSound(wrongSound);
   }
-
-  const users = loadUsers();
-
-  if (users[username]) {
-    loginMsg.textContent = "Username already exists.";
-    return;
-  }
-
-  users[username] = {
-    password,
-    pin,
-    trustedDeviceId: getDeviceId(),
-    bestScore: 0
-  };
-
-  saveUsers(users);
-  loginMsg.textContent = "Account created! Now click LOGIN.";
 });
 
 // ===== LOGIN =====
-loginBtn?.addEventListener("click", () => {
+loginBtn?.addEventListener("click", async () => {
   const username = usernameEl.value.trim();
   const password = passwordEl.value.trim();
-  const pin = pinEl.value.trim();
 
   if (!username || !password) {
     loginMsg.textContent = "Enter username and password.";
     return;
   }
 
-  const users = loadUsers();
+  try {
+    const res = await fetch("login.php", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        username,
+        password
+      })
+    });
 
-  if (!users[username]) {
-    loginMsg.textContent = "User not found. Please SIGN UP first.";
-    return;
-  }
+    const data = await res.json();
 
-  if (users[username].password !== password) {
-    loginMsg.textContent = "Incorrect password.";
-    playSound(wrongSound);
-    return;
-  }
+    if (data.success) {
+      loginMsg.textContent = "";
+      await updateLoginUI();
+      if (typeof loadLeaderboard === "function") {
+  loadLeaderboard();
+}
 
-  const currentDeviceId = getDeviceId();
-
-  if (
-    users[username].trustedDeviceId &&
-    users[username].trustedDeviceId !== currentDeviceId
-  ) {
-    if (!pin) {
-      loginMsg.textContent = "New device detected. Enter your 4-digit PIN.";
-      return;
-    }
-
-    if (users[username].pin !== pin) {
-      loginMsg.textContent = "Wrong PIN. Access denied.";
+      if (typeof startFreshGame === "function") {
+        startFreshGame();
+      }
+    } else {
+      loginMsg.textContent = data.message;
       playSound(wrongSound);
-      return;
     }
-
-    users[username].trustedDeviceId = currentDeviceId;
-    saveUsers(users);
-  }
-
-  const token = generateToken();
-  const sessions = loadSessions();
-  sessions[token] = username;
-  saveSessions(sessions);
-  setSessionToken(token);
-
-  loginMsg.textContent = "";
-  updateLoginUI();
-
-  if (typeof startFreshGame === "function") {
-    startFreshGame();
+  } catch (error) {
+    loginMsg.textContent = "Login request failed.";
+    playSound(wrongSound);
   }
 });
 
 // ===== LOGOUT =====
-logoutBtn?.addEventListener("click", () => {
-  updateBestScore();
+logoutBtn?.addEventListener("click", async () => {
+  await updateBestScore();
 
-  invalidateCurrentSession();
+  try {
+    await fetch("logout.php");
+  } catch (error) {
+    console.error("Logout request failed");
+  }
+
+  currentUser = null;
 
   if (typeof timerId !== "undefined") {
     clearInterval(timerId);
     timerId = null;
   }
 
-  updateLoginUI();
+  await updateLoginUI();
 });

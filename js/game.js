@@ -241,6 +241,11 @@ function checkLevelComplete() {
     clearInterval(timerId);
     timerId = null;
     updateBestScore();
+
+    if (typeof loadLeaderboard === "function") {
+      loadLeaderboard();
+    }
+
     showLevelCompleteModal();
   }
 }

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Leaderboard - Banana Memory Game</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo+2:wght@300;400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="cursor" id="cursor"></div>
+  <div class="cursor-dot" id="cursorDot"></div>
+
+  <div class="bg-mesh"></div>
+  <div class="scanlines"></div>
+  <canvas id="particles"></canvas>
+
+  <section class="leaderboard-page">
+    <header>
+      <div class="logo">
+        <div class="logo-icon">🍌</div>
+        BANANA MEMORY
+      </div>
+      <a href="index.html" class="back-btn">← Back to Game</a>
+    </header>
+
+    <div class="leaderboard-page-wrap">
+      <h1 class="game-heading">LEADERBOARD</h1>
+      <p class="subtitle">Top players ranked by highest score and lowest moves.</p>
+
+      <div id="leaderboardContent">
+        <p class="leaderboard-empty">Loading leaderboard...</p>
+      </div>
+    </div>
+  </section>
+
+  <script>
+  const cursor = document.getElementById("cursor");
+  const dot = document.getElementById("cursorDot");
+
+  let mx = 0, my = 0, cx = 0, cy = 0;
+
+  document.addEventListener("mousemove", (e) => {
+    mx = e.clientX;
+    my = e.clientY;
+
+    if (dot) {
+      dot.style.left = `${mx}px`;
+      dot.style.top = `${my}px`;
+    }
+  });
+
+  (function animateCursor() {
+    cx += (mx - cx) * 0.12;
+    cy += (my - cy) * 0.12;
+
+    if (cursor) {
+      cursor.style.left = `${cx}px`;
+      cursor.style.top = `${cy}px`;
+    }
+
+    requestAnimationFrame(animateCursor);
+  })();
+
+  document.querySelectorAll("a, button").forEach((el) => {
+    el.addEventListener("mouseenter", () => {
+      if (cursor) cursor.style.transform = "translate(-50%,-50%) scale(1.6)";
+    });
+
+    el.addEventListener("mouseleave", () => {
+      if (cursor) cursor.style.transform = "translate(-50%,-50%) scale(1)";
+    });
+  });
+
+  async function loadLeaderboardPage() {
+    const container = document.getElementById("leaderboardContent");
+
+    try {
+      const res = await fetch("leaderboard.php");
+      const data = await res.json();
+
+      if (!data.success || !data.leaders || data.leaders.length === 0) {
+        container.innerHTML = "<p class='leaderboard-empty'>No scores yet.</p>";
+        return;
+      }
+
+      let tableHtml = `
+        <table class="leaderboard-table">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Username</th>
+              <th>Score</th>
+              <th>Moves</th>
+            </tr>
+          </thead>
+          <tbody>
+      `;
+
+      data.leaders.forEach((player, index) => {
+        const rankClass = index === 0 ? "leaderboard-rank-gold" : "";
+        tableHtml += `
+          <tr>
+            <td class="${rankClass}">#${index + 1}</td>
+            <td>${player.username}</td>
+            <td>${player.best_score}</td>
+            <td>${player.best_moves ?? "-"}</td>
+          </tr>
+        `;
+      });
+
+      tableHtml += `
+          </tbody>
+        </table>
+      `;
+
+      container.innerHTML = tableHtml;
+    } catch (error) {
+      container.innerHTML = "<p class='leaderboard-empty'>Could not load leaderboard.</p>";
+    }
+  }
+
+  loadLeaderboardPage();
+</script>
+</body>
+</html>
